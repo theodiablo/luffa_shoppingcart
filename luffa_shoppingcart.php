@@ -26,7 +26,7 @@ if (!defined('_PS_VERSION_')) {
 
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 
-class Ps_Shoppingcart extends Module implements WidgetInterface
+class Luffa_Shoppingcart extends Module implements WidgetInterface
 {
     /**
      * @var string Name of the module running on PS 1.6.x. Used for data migration.
@@ -35,16 +35,16 @@ class Ps_Shoppingcart extends Module implements WidgetInterface
 
     public function __construct()
     {
-        $this->name = 'ps_shoppingcart';
+        $this->name = 'luffa_shoppingcart';
         $this->tab = 'front_office_features';
         $this->version = '2.0.4';
-        $this->author = 'PrestaShop';
+        $this->author = 'Luffa';
         $this->need_instance = 0;
 
         $this->bootstrap = true;
         parent::__construct();
 
-        $this->displayName = $this->trans('Shopping cart', [], 'Modules.Shoppingcart.Admin');
+        $this->displayName = $this->trans('Shopping cart - Luffa', [], 'Modules.Shoppingcart.Admin');
         $this->description = $this->trans('Display a shopping cart icon on your pages and the number of items it contains.', [], 'Modules.Shoppingcart.Admin');
         $this->ps_versions_compliancy = ['min' => '1.7.1.0', 'max' => _PS_VERSION_];
         $this->controllers = ['ajax'];
@@ -57,10 +57,6 @@ class Ps_Shoppingcart extends Module implements WidgetInterface
     {
         if (Configuration::isCatalogMode()) {
             return;
-        }
-
-        if (Configuration::get('PS_BLOCK_CART_AJAX')) {
-            $this->context->controller->registerJavascript('modules-shoppingcart', 'modules/' . $this->name . '/ps_shoppingcart.js', ['position' => 'bottom', 'priority' => 150]);
         }
     }
 
@@ -94,8 +90,9 @@ class Ps_Shoppingcart extends Module implements WidgetInterface
 
         return [
             'cart' => (new CartPresenter())->present(isset($params['cart']) ? $params['cart'] : $this->context->cart),
-            'refresh_url' => $this->context->link->getModuleLink('ps_shoppingcart', 'ajax', [], null, null, null, true),
+            'refresh_url' => $this->context->link->getModuleLink('luffa_shoppingcart', 'ajax', [], null, null, null, true),
             'cart_url' => $cart_url,
+            'selected_delivery_option' => $this->context->cart->getDeliveryOption()
         ];
     }
 
@@ -113,40 +110,31 @@ class Ps_Shoppingcart extends Module implements WidgetInterface
 
         $this->smarty->assign($this->getWidgetVariables($hookName, $params));
 
-        return $this->fetch('module:ps_shoppingcart/ps_shoppingcart.tpl');
+        return $this->fetch('module:luffa_shoppingcart/views/templates/luffa_shoppingcart.tpl');
     }
-
-    /**
-     * @param Cart $cart
-     * @param int $id_product
-     * @param int $id_product_attribute
-     * @param int $id_customization
-     *
-     * @return string
-     *
-     * @throws Exception
-     */
-    public function renderModal(Cart $cart, $id_product, $id_product_attribute, $id_customization)
+    
+    public function renderMiniCartBody($hookName, array $params)
     {
-        $data = (new CartPresenter())->present($cart);
-        $product = null;
-        foreach ($data['products'] as $p) {
-            if ((int) $p['id_product'] == $id_product &&
-                (int) $p['id_product_attribute'] == $id_product_attribute &&
-                (int) $p['id_customization'] == $id_customization) {
-                $product = $p;
-                break;
-            }
+        if (Configuration::isCatalogMode()) {
+            return '';
         }
 
-        $this->smarty->assign([
-            'product' => $product,
-            'cart' => $data,
-            'cart_url' => $this->getCartSummaryURL(),
-        ]);
+        $this->smarty->assign($this->getWidgetVariables($hookName, $params));
 
-        return $this->fetch('module:ps_shoppingcart/modal.tpl');
+        return $this->fetch('module:luffa_shoppingcart/views/templates/luffa_shoppingcart-body.tpl');
     }
+    
+    public function renderMiniCartHeaderProducts($hookName, array $params)
+    {
+        if (Configuration::isCatalogMode()) {
+            return '';
+        }
+
+        $this->smarty->assign($this->getWidgetVariables($hookName, $params));
+
+        return $this->fetch('module:luffa_shoppingcart/views/templates/luffa_shoppingcart-header-products.tpl');
+    }
+
 
     /**
      * @return string
@@ -177,7 +165,7 @@ class Ps_Shoppingcart extends Module implements WidgetInterface
         return
             parent::install()
                 && $this->registerHook('header')
-                && $this->registerHook('displayNav2')
+                && $this->registerHook('displayTop')
                 && Configuration::updateValue('PS_BLOCK_CART_AJAX', 1);
     }
 

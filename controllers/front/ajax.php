@@ -17,7 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-class Ps_ShoppingcartAjaxModuleFrontController extends ModuleFrontController
+class Luffa_ShoppingcartAjaxModuleFrontController extends ModuleFrontController
 {
     /**
      * @var bool
@@ -35,20 +35,12 @@ class Ps_ShoppingcartAjaxModuleFrontController extends ModuleFrontController
 
         $modal = null;
 
-        if ($this->module instanceof Ps_Shoppingcart && Tools::getValue('action') === 'add-to-cart') {
-            $modal = $this->module->renderModal(
-                $this->context->cart,
-                (int) Tools::getValue('id_product'),
-                (int) Tools::getValue('id_product_attribute'),
-                (int) Tools::getValue('id_customization')
-            );
-        }
-
         ob_end_clean();
         header('Content-Type: application/json');
         die(json_encode([
-            'preview' => $this->module instanceof Ps_Shoppingcart ? $this->module->renderWidget(null, ['cart' => $this->context->cart]) : '',
-            'modal' => $modal,
+            'minicartbody' => $this->module instanceof Luffa_Shoppingcart ? $this->module->renderMiniCartBody(null, ['cart' => $this->context->cart]) : '',
+            'minicartheaderproducts' => $this->module instanceof Luffa_Shoppingcart ? $this->module->renderMiniCartHeaderProducts(null, ['cart' => $this->context->cart]) : '',
+            'productCount' => $this->context->cart->nbProducts()
         ]));
     }
 }

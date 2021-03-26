@@ -1,7 +1,7 @@
 {
-  "name": "prestashop/ps_shoppingcart",
-  "description": "PrestaShop module ps_shoppingcart",
-  "homepage": "https://github.com/PrestaShop/ps_shoppingcart",
+  "name": "luffa_shoppingcart",
+  "description": "Fork of PrestaShop module luffa_shoppingcart",
+  "homepage": "https://github.com/PrestaShop/luffa_shoppingcart",
   "license": "AFL-3.0",
   "authors": [
     {
@@ -23,7 +23,7 @@
   },
   "autoload": {
     "classmap": [
-      "ps_shoppingcart.php",
+      "luffa_shoppingcart.php",
       "controllers/"
     ]
   },

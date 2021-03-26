@@ -4,7 +4,7 @@ parameters:
 		- .github/workflows/phpstan/autoload.php
 	paths:
 		- controllers
-		- ps_shoppingcart.php
+		- luffa_shoppingcart.php
 	ignoreErrors:
 		- '#^Call to an undefined method AdminController|FrontController\:\:#'
 		- '#^Call to an undefined method Module\:\:#'
